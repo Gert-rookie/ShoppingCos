@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="top.fotg.dao.OrderDao">
+
+    <select id="queryOrderAll" resultType="int">
+      SELECT COUNT(orderNumber) from orders where u_id=#{u_id}
+     </select>
+
+    <select id="query_Order_By_Uid_Page" resultMap="orderList">
+          SELECT * from orders  where u_id=#{u_id}
+              ORDER BY orderDate DESC
+                LIMIT #{start_page},#{end_page}
+    </select>
+    <resultMap id="orderList" type="top.fotg.vo.OrderDetailList">
+        <id property="orderNumber" column="orderNumber"/>
+        <result property="orderDate" column="orderDate"/>
+        <result property="goodsStatus" column="goodsStatus"/>
+        <collection property="goodsList" javaType="ArrayList" column="orderNumber" ofType="top.fotg.vo.OrderInsertDetail"
+                    select="selectOrderDetailsByOrderNumber">
+            <result property="orderType" column="orderType"/>
+            <result property="orderId" column="orderId"/>
+            <result property="goodsMoney" column="goodsMoney"/>
+            <result property="goodsNumber" column="goodsNumber"/>
+            <result property="goodsDetail" column="goodsDetail"/>
+            <result property="goodsDetail2" column="goodsDetail2"/>
+            <result property="goodsImg" column="goodsImg"/>
+        </collection>
+    </resultMap>
+    <select id="selectOrderDetailsByOrderNumber"  resultType="top.fotg.vo.OrderInsertDetail">
+             select orderType,orderId,goodsMoney,goodsNumber,goodsDetail,goodsDetail2,goodsImg
+             from orderdetail where orderNumber=#{orderNumber}
+    </select>
+
+
+    <insert id="insert_order">
+        insert into orders (orderNumber,orderDate,u_id) values (#{orderNumber},#{orderDate},#{u_id})
+    </insert>
+
+    <insert id="insert_orderList">
+        insert into orderdetail (orderNumber, orderType, orderID, goodsMoney, goodsNumber, goodsDetail, goodsDetail2, goodsImg)
+        values 
+        <foreach collection="orderList" item="item" index="index" separator=",">
+            (
+              #{orderNumber},
+            #{item.orderType},
+            #{item.orderId},
+            #{item.goodsMoney},
+            #{item.goodsNumber},
+            #{item.goodsDetail},
+            #{item.goodsDetail2},
+            #{item.goodsImg}
+            )
+        </foreach>
+    </insert>
+</mapper>

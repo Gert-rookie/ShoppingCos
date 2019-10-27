@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="top.fotg.dao.GoodsDao">
+    <resultMap id="SingerCom" type="top.fotg.entity.Perfume">
+        <id property="per_id" column="per_id"/>
+        <result property="name" column="name"/>
+        <result property="engname" column="engname"/>
+        <result property="picture" column="picture"/>
+        <collection property="list" javaType="ArrayList" column="per_id" ofType="top.fotg.entity.PerContainer"
+                    select="selectGoodsDetail">
+            <id property="per_id" column="per_id"/>
+            <result property="capacity" column="capacity"/>
+            <result property="price" column="price"/>
+            <result property="restnumber" column="restnumber"/>
+        </collection>
+    </resultMap>
+            <select id="querySingerComXS" resultMap="SingerCom">
+                select * from perfume where per_id=#{id}
+            </select>
+    <select id="selectGoodsDetail" resultType="top.fotg.entity.PerContainer">
+        select * from per_container where per_id=#{per_id}
+    </select>
+
+    <select id="querySingerComSkin" resultType="top.fotg.entity.SkinCare">
+        select * from skin_care where skin_id=#{id}
+    </select>
+
+
+    <resultMap id="CZ" type="top.fotg.entity.Cosmetics">
+        <id property="cos_id" column="cos_id"/>
+        <result property="name" column="name"/>
+        <result property="engname" column="engname"/>
+        <result property="picture" column="picture"/>
+        <result property="price" column="price"/>
+        <collection property="list" javaType="ArrayList" column="cos_id" ofType="top.fotg.vo.Color"
+                    select="selectColor">
+            <result property="color" column="color"/>
+            <result property="color_name" column="color_name"/>
+            <result property="restnumber" column="restnumber"/>
+        </collection>
+    </resultMap>
+<select id="querySingerComCos" resultMap="CZ">
+    select * from cosmetics where cos_id=#{id}
+</select>
+    <select id="selectColor" resultType="top.fotg.vo.Color">
+        select a.color,a.color_name,b.restnumber
+        from Cos_Color a,cos_coscolor b where b.cos_id=#{cos_id} and a.color_id=b.color_id
+    </select>
+
+  </mapper>

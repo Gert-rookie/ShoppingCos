@@ -1,0 +1,202 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="top.fotg.dao.UserMapper">
+    
+    <resultMap id="userinfo" type="top.fotg.entity.user.User">
+        <id column="u_id" property="u_id"/>
+        <result column="u_lastname" property="u_lastname"/>
+        <result column="u_sex" property="u_sex"/>
+        <result column="u_birth" property="u_birth"/>
+        <result column="u_idcard" property="u_idcard"/>
+        <result column="u_phone" property="u_phone"/>
+        <result column="u_email" property="u_email"/>
+        <result column="u_pwd" property="u_pwd"/>
+        <result column="u_status" property="u_status"/>
+        <result column="user_phone" property="user_phone"/>
+        <collection property="address" ofType="top.fotg.entity.user.Address">
+            <id column="a_id" property="a_id"></id>
+            <result column="a_lastname" property="a_lastname"/>
+            <result column="a_phone" property="a_phone"/>
+            <result column="a_sex" property="a_sex"/>
+            <result column="a_moren" property="a_moren"/>
+            <result column="province" property="province"/>
+            <result column="city" property="city"/>
+            <result column="area" property="area"/>
+            <result column="other" property="other"/>
+        </collection>
+
+    </resultMap>
+    <select id="findByUsername" resultMap="userinfo">
+        SELECT * FROM userinfo u INNER JOIN user_addr a
+        ON
+         u.u_id = a.u_id AND user_phone = #{user_phone}
+    </select>
+
+    <select id="findByUserPhone" resultType="top.fotg.entity.user.User">
+        SELECT * FROM userinfo WHERE user_phone = #{user_phone}
+    </select>
+    <select id="findByAddressMoren" resultType="top.fotg.entity.user.Address">
+        SELECT * FROM user_addr
+        where
+        a_moren = #{a_moren}
+    </select>
+    <select id="findByPassword" resultType="top.fotg.entity.user.User">
+        SELECT * FROM userinfo
+        where
+        u_pwd = #{u_pwd}
+    </select>
+    <select id="findUserById" resultType="top.fotg.entity.user.User">
+        SELECT * FROM userinfo
+      where
+      u_id = #{u_id}
+    </select>
+
+    <insert id="insertUser" parameterType="top.fotg.entity.user.User">
+        INSERT INTO userinfo(user_phone,u_pwd,u_status) VALUES(#{user_phone},#{u_pwd},#{u_status})
+    </insert>
+    <insert id="saveaddr" parameterType="top.fotg.entity.user.Address">
+        INSERT INTO user_addr(u_id,
+							a_lastname,
+							a_sex,
+							province,
+							city,
+							area,
+							other,
+							a_moren,
+							a_phone) VALUES(
+							#{u_id},
+							#{a_lastname},
+							#{a_sex},
+							#{province},
+							#{city},
+							#{area},
+							#{other},
+							#{a_moren},
+							#{a_phone}
+							)
+
+
+        <!--<trim prefix="(" suffix=")" suffixOverrides=",">-->
+            <!--<if test="u_id != null and u_id != '' ">-->
+                <!--u_id,-->
+            <!--</if>-->
+            <!--<if test="a_lastname != null and a_lastname != '' ">-->
+                <!--a_lastname,-->
+            <!--</if>-->
+            <!--<if test="a_sex != null and a_sex != '' ">-->
+                <!--a_sex,-->
+            <!--</if>-->
+            <!--<if test="province != null and province != '' ">-->
+                <!--province,-->
+            <!--</if>-->
+            <!--<if test="city != null and city != '' ">-->
+                <!--city,-->
+            <!--</if>-->
+            <!--<if test="area != null and area != '' ">-->
+                <!--area,-->
+            <!--</if>-->
+            <!--<if test="other != null and other != '' ">-->
+                <!--other,-->
+            <!--</if>-->
+            <!--<if test="a_moren != null and a_moren != '' ">-->
+                <!--a_moren,-->
+            <!--</if>-->
+            <!--<if test="a_phone != null and a_phone != '' ">-->
+                <!--a_phone,-->
+            <!--</if>-->
+        <!--</trim>-->
+        <!--<trim prefix="values (" suffix=")" suffixOverrides=",">-->
+            <!--<if test="u_id != null and u_id != '' ">-->
+                <!--#{u_id,jdbcType=BIGINT},-->
+            <!--</if>-->
+            <!--<if test="a_lastname != null and a_lastname != '' ">-->
+                <!--#{a_lastname,jdbcType=BIGINT},-->
+            <!--</if>-->
+            <!--<if test="a_sex != null and a_sex != '' ">-->
+                <!--#{a_sex,jdbcType=VARCHAR},-->
+            <!--</if>-->
+            <!--<if test="province != null and province != '' ">-->
+                <!--#{province,jdbcType=VARCHAR},-->
+            <!--</if>-->
+            <!--<if test="city != null and city != '' ">-->
+                <!--#{city,jdbcType=INTEGER},-->
+            <!--</if>-->
+            <!--<if test="area != null and area != '' ">-->
+                <!--#{area,jdbcType=VARCHAR},-->
+            <!--</if>-->
+            <!--<if test="other != null and other != '' ">-->
+                <!--#{other,jdbcType=VARCHAR},-->
+            <!--</if>-->
+            <!--<if test="a_moren != null and a_moren != '' ">-->
+                <!--#{a_moren,jdbcType=VARCHAR},-->
+            <!--</if>-->
+            <!--<if test="a_phone != null and a_phone != '' ">-->
+                <!--#{a_phone,jdbcType=TIMESTAMP},-->
+            <!--</if>-->
+        <!--</trim>-->
+    </insert>
+
+    <update id="updatetUser" parameterType="top.fotg.entity.user.User" >
+        UPDATE userinfo
+          <set>
+              <if test="u_birth != null">
+                  u_birth = #{u_birth},
+              </if>
+              <if test="u_sex != null and u_sex != '' ">
+                  u_sex = #{u_sex},
+              </if>
+              <if test="u_lastname != null and u_lastname != '' ">
+                  u_lastname = #{u_lastname},
+              </if>
+              <if test="u_phone != null and u_phone != '' ">
+                  u_phone = #{u_phone},
+              </if>
+              <if test="u_email != null and u_email != '' ">
+                  u_email = #{u_email},
+              </if>
+          </set>
+        WHERE u_id = #{u_id}
+    </update>
+
+    <update id="updatepassword" parameterType="top.fotg.entity.user.User">
+        UPDATE userinfo SET u_pwd = #{u_pwd} WHERE u_id = #{u_id}
+    </update>
+
+    <update id="updateAddressMoren">
+        UPDATE user_addr SET a_moren = #{a_moren} WHERE a_id = #{a_id}
+    </update>
+    <update id="updateAddr">
+        UPDATE user_addr
+          <set>
+              <if test="a_lastname != null and a_lastname != '' ">
+                  a_lastname = #{a_lastname},
+              </if>
+              <if test="a_sex != null and a_sex != '' ">
+                  a_sex = #{a_sex},
+              </if>
+              <if test="province != null and province != '' ">
+                  province = #{province},
+              </if>
+              <if test="city != null and city != '' ">
+                  city = #{city},
+              </if>
+              <if test="area != null and area != '' ">
+                  area = #{area},
+              </if>
+              <if test="other != null and other != '' ">
+                  other = #{other},
+              </if>
+              <if test="a_moren != null and a_moren != '' ">
+                  a_moren = #{a_moren},
+              </if>
+              <if test="a_phone != null and a_phone != '' ">
+                  a_phone = #{a_phone},
+              </if>
+          </set>
+				WHERE a_id = #{a_id}
+    </update>
+    <delete id="deladdr">
+        DELETE FROM user_addr WHERE a_id = #{a_id}
+    </delete>
+
+</mapper>
